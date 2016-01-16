@@ -52,5 +52,13 @@ module Commands
 end
 
 ET::UI.setup(commands: Commands)
-ET::UI.set_on_exit { $PLAYER.destroy }
+
+ET::UI.set_on_slider_value_changed do |_, _, value|
+  $PLAYER.seek(value)
+end
+
+ET::UI.set_on_exit do
+  $PLAYER.destroy
+end
+
 ET::UI.loop

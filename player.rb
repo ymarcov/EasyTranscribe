@@ -19,6 +19,7 @@ module EasyTranscribe
     def open(filename)
       reset
 
+      @filename = filename
       @player = MPlayer::Slave.new(filename)
       @alive = true
       stop
@@ -60,23 +61,21 @@ module EasyTranscribe
 
     def seek(sec_from_start)
       @player.command("seek #{sec_from_start} 2")
-      notify_position_changed
     end
 
     def rewind
       return unless playing?
       @player.command('seek -3 0')
-      notify_position_changed
     end
 
     def fast_forward
       return unless playing?
       @player.command('seek 3 0')
-      notify_position_changed
     end
 
     def length
-      @player.time_length.to_f
+      return @length if @length
+      @length = `mp3info -p%S "#{@filename}"`.to_f
     end
 
     private
@@ -86,6 +85,8 @@ module EasyTranscribe
       @thread.join if @thread
       @player.quit if @player
       @player = nil
+      @filename = nil
+      @length = nil
       @on_position_changed = nil
       @paused = false
     end

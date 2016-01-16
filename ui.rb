@@ -184,6 +184,10 @@ module EasyTranscribe
     def self.set_slider_end_segment
     end
 
+    def self.set_on_slider_value_changed(&block)
+      @slider.signal_connect('change-value', &block)
+    end
+
     def self.main_window
       @main_window
     end
