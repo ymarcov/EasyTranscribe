@@ -52,6 +52,27 @@ module EasyTranscribe
       buttons
     end
 
+    def self.create_toolbar_accelerators(buttons)
+      group = Gtk::AccelGroup.new
+
+      {
+        open: '<Control>o',
+        stop: '<Control>w',
+        play: '<Control>space',
+        rewind: '<Control>r',
+        fast_forward: '<Control>f',
+        start_segment: '<Control>1',
+        end_segment: '<Control>1',
+        clear_end_segment: '<Control>0',
+        restart_segment: '<Control>e',
+      }.each do |id, accel|
+        key, mod = Gtk.accelerator_parse(accel)
+        buttons[id].add_accelerator('clicked', group, key, mod, Gtk::AccelFlags::VISIBLE)
+      end
+
+      group
+    end
+
     def self.create_toolbar
       tb = Gtk::Box.new(:vertical)
 
@@ -169,6 +190,7 @@ module EasyTranscribe
 
       win = create_window
       win.add(widgets[:layout])
+      win.add_accel_group(create_toolbar_accelerators(widgets[:toolbar].buttons))
       win.show_all
 
       bind_commands(widgets[:toolbar].buttons, opts[:commands])
