@@ -32,8 +32,9 @@ module EasyTranscribe
         rewind: Gtk::Button.new(label: 'Rewind'),
         fast_forward: Gtk::Button.new(label: 'Fast Forward'),
         _sep_2: Gtk::SeparatorToolItem.new,
-        start_segment: Gtk::Button.new(label: 'Segment/Start'),
-        end_segment: Gtk::Button.new(label: 'Segment/End'),
+        _lbl_2: Gtk::Label.new('Segment: '),
+        start_segment: Gtk::Button.new(label: 'Start'),
+        end_segment: Gtk::Button.new(label: 'End'),
         restart_segment: Gtk::Button.new(label: 'Restart'),
       }
 
@@ -54,16 +55,21 @@ module EasyTranscribe
 
       button_box = Gtk::Box.new(:horizontal)
 
-      def tb.buttons
-        unless defined? @buttons
-          @buttons = UI.create_toolbar_items.freeze
-        end
+      tb.instance_eval do
+        @items = UI.create_toolbar_items.freeze
+        @buttons = @items.select { |_, w| w.kind_of?(Gtk::Button) }.freeze
+      end
 
+      def tb.buttons
         @buttons
       end
 
-      tb.buttons.each do |_, b|
-        b.set_border_width(2)
+      def tb.items
+        @items
+      end
+
+      tb.items.each do |_, b|
+        b.set_border_width(2) if b.respond_to?(:set_border_width)
         button_box.pack_start(b)
       end
 
