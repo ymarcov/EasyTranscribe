@@ -26,6 +26,8 @@ module EasyTranscribe
             [Gtk::Stock::CANCEL, :cancel]
           ]
         )
+
+        add_filters
       end
 
       def run
