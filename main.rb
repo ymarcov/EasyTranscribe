@@ -7,6 +7,7 @@ require_relative 'ui'
 ET = EasyTranscribe
 
 $PLAYER = ET::Player.new
+$FILE = File.open(ARGV[0], 'w')
 
 module Commands
   def self.open
@@ -35,6 +36,10 @@ module Commands
 
   def self.play
     $PLAYER.playing? and $PLAYER.pause or $PLAYER.play
+
+    $FILE.truncate(0)
+    $FILE.write(ET::UI.text)
+    $FILE.flush
   end
 
   def self.rewind

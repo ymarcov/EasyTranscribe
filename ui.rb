@@ -176,6 +176,7 @@ module EasyTranscribe
 
       @main_window = win
       @slider = widgets[:toolbar].slider
+      @textview = widgets[:textview]
       init_slider
     end
 
@@ -222,6 +223,10 @@ module EasyTranscribe
 
     def self.set_on_slider_value_changed(&block)
       @slider.signal_connect('change-value', &block)
+    end
+
+    def self.text
+      @textview.editor.buffer.text
     end
 
     def self.main_window
