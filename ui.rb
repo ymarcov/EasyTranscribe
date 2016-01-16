@@ -6,12 +6,15 @@ module EasyTranscribe
   module UI
     private
 
+    @on_exit = nil
+
     def self.create_window
       win = Gtk::Window.new
       win.title = 'EasyTranscribe'
       win.set_border_width(20)
 
       win.signal_connect('delete_event') do
+        @on_exit.call if @on_exit
         Gtk.main_quit
         false
       end
@@ -64,13 +67,19 @@ module EasyTranscribe
         button_box.pack_start(b)
       end
 
+      def tb.slider
+        unless defined? @scale
+          @scale = Gtk::Scale.new(:horizontal)
+          @scale.set_range(0, 1)
+          @scale.add_mark(0, Gtk::PositionType::BOTTOM, 'S')
+          @scale.add_mark(1, Gtk::PositionType::BOTTOM, 'E')
+          @scale.add_mark(1, Gtk::PositionType::TOP, 'End')
+        end
 
-      scale = Gtk::Scale.new(:horizontal)
-      scale.set_range(0,100)
-      scale.add_mark(0, Gtk::PositionType::BOTTOM, 'S')
-      scale.add_mark(100, Gtk::PositionType::BOTTOM, 'E')
+        @scale
+      end
 
-      tb.pack_start(scale, padding: 5)
+      tb.pack_start(tb.slider, padding: 5)
       tb.pack_start(button_box, padding: 10)
 
       tb
@@ -154,11 +163,42 @@ module EasyTranscribe
       win.set_focus(widgets[:textview].editor)
 
       @main_window = win
+      @slider = widgets[:toolbar].slider
     end
 
+    def self.reset_slider(length)
+      @slider.set_range(0, length)
+      @slider.clear_marks
+      @slider.add_mark(0, Gtk::PositionType::BOTTOM, 'S')
+      @slider.add_mark(length, Gtk::PositionType::BOTTOM, 'E')
+      @slider.add_mark(length, Gtk::PositionType::TOP, "End (#{length})")
+    end
+
+    def self.set_slider_position(position)
+      @slider.value = position
+    end
+
+    def self.set_slider_start_segment
+    end
+
+    def self.set_slider_end_segment
+    end
 
     def self.main_window
       @main_window
+    end
+
+    def self.set_on_exit(&block)
+      @on_exit = block
+    end
+
+    def self.safe_dispatch
+      Gdk.threads_enter
+      begin
+        yield
+      ensure
+        Gdk.threads_leave
+      end
     end
 
     def self.loop
