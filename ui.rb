@@ -70,10 +70,6 @@ module EasyTranscribe
       def tb.slider
         unless defined? @scale
           @scale = Gtk::Scale.new(:horizontal)
-          @scale.set_range(0, 1)
-          @scale.add_mark(0, Gtk::PositionType::BOTTOM, 'S')
-          @scale.add_mark(1, Gtk::PositionType::BOTTOM, 'E')
-          @scale.add_mark(1, Gtk::PositionType::TOP, 'End')
         end
 
         @scale
@@ -148,6 +144,14 @@ module EasyTranscribe
       end
     end
 
+    def self.init_slider
+        @slider.set_range(0, 1)
+        @slider_segment_start = 0
+        @slider_segment_end = 1
+        @slider_length = nil
+        reset_slider
+    end
+
     public
 
     def self.setup(opts = {})
@@ -164,24 +168,48 @@ module EasyTranscribe
 
       @main_window = win
       @slider = widgets[:toolbar].slider
+      init_slider
     end
 
-    def self.reset_slider(length)
-      @slider.set_range(0, length)
+    def self.reset_slider(length = nil)
       @slider.clear_marks
-      @slider.add_mark(0, Gtk::PositionType::BOTTOM, 'S')
-      @slider.add_mark(length, Gtk::PositionType::BOTTOM, 'E')
-      @slider.add_mark(length, Gtk::PositionType::TOP, "End (#{length})")
+
+      if length
+        @slider.set_range(0, length)
+        @slider_segment_end = length
+        @slider_length = length
+      end
+
+      @slider.add_mark(@slider_segment_start, Gtk::PositionType::BOTTOM, 'S')
+      @slider.add_mark(@slider_segment_end, Gtk::PositionType::BOTTOM, 'E')
+
+      if @slider_length
+        @slider.add_mark(@slider_segment_end, Gtk::PositionType::TOP, "End (#{length})")
+      else
+        @slider.add_mark(@slider_segment_end, Gtk::PositionType::TOP, "End")
+      end
     end
 
     def self.set_slider_position(position)
       @slider.value = position
     end
 
-    def self.set_slider_start_segment
+    def self.slider_start_segment=(position)
+      @slider_segment_start = position
+      reset_slider
     end
 
-    def self.set_slider_end_segment
+    def self.slider_end_segment=(position)
+      @slider_segment_end = position
+      reset_slider
+    end
+
+    def self.slider_start_segment
+      return @slider_segment_start
+    end
+
+    def self.slider_end_segment
+      return @slider_segment_end
     end
 
     def self.set_on_slider_value_changed(&block)

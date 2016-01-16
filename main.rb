@@ -18,6 +18,10 @@ module Commands
         $PLAYER.on_position_changed do |position|
           ET::UI.safe_dispatch do
             ET::UI.set_slider_position(position)
+
+            if position >= ET::UI.slider_end_segment
+              Commands.restart_segment
+            end
           end
         end
 
@@ -42,12 +46,15 @@ module Commands
   end
 
   def self.start_segment
+    ET::UI.slider_start_segment = $PLAYER.position
   end
 
   def self.end_segment
+    ET::UI.slider_end_segment = $PLAYER.position
   end
 
   def self.restart_segment
+    $PLAYER.seek(ET::UI.slider_start_segment)
   end
 end
 
