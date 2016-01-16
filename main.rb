@@ -64,6 +64,7 @@ module Commands
 
   def self.restart_segment
     $PLAYER.seek(ET::UI.slider_start_segment)
+    $PLAYER.play
   end
 end
 
