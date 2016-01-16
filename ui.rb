@@ -40,13 +40,13 @@ module EasyTranscribe
       }
 
       buttons[:open].set_tooltip_markup('<b>Ctrl+O</b> Open an audio file')
-      buttons[:stop].set_tooltip_markup('<b>Ctrl+S</b> Stop and rewind track to beginning')
-      buttons[:play].set_tooltip_markup('<b>Ctrl+P</b> Play or Pause track')
+      buttons[:stop].set_tooltip_markup('<b>Ctrl+W</b> Stop and rewind track to beginning')
+      buttons[:play].set_tooltip_markup('<b>Ctrl+Space</b> Play or Pause track')
       buttons[:rewind].set_tooltip_markup('<b>Ctrl+R</b> Rewind track')
       buttons[:fast_forward].set_tooltip_markup('<b>Ctrl+F</b> Fast-forward track')
-      buttons[:start_segment].set_tooltip_markup('<b>Ctrl+A</b> Set segment start at cursor position')
-      buttons[:end_segment].set_tooltip_markup('<b>Ctrl+B</b> Set segment end at cursor position')
-      buttons[:clear_end_segment].set_tooltip_markup('Clear end segment')
+      buttons[:start_segment].set_tooltip_markup('<b>Ctrl+1</b> Set segment start at cursor position')
+      buttons[:end_segment].set_tooltip_markup('<b>Ctrl+2</b> Set segment end at cursor position')
+      buttons[:clear_end_segment].set_tooltip_markup('<b>Ctrl+0</b> Clear end segment')
       buttons[:restart_segment].set_tooltip_markup('<b>Ctrl+E</b> Restart segment')
 
       buttons
