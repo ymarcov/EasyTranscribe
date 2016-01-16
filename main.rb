@@ -53,6 +53,10 @@ module Commands
     ET::UI.slider_end_segment = $PLAYER.position
   end
 
+  def self.clear_end_segment
+    ET::UI.slider_end_segment = nil
+  end
+
   def self.restart_segment
     $PLAYER.seek(ET::UI.slider_start_segment)
   end

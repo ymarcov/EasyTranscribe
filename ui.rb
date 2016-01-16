@@ -35,6 +35,7 @@ module EasyTranscribe
         _lbl_2: Gtk::Label.new('Segment: '),
         start_segment: Gtk::Button.new(label: 'Start'),
         end_segment: Gtk::Button.new(label: 'End'),
+        clear_end_segment: Gtk::Button.new(label: 'Clear End'),
         restart_segment: Gtk::Button.new(label: 'Restart'),
       }
 
@@ -45,6 +46,7 @@ module EasyTranscribe
       buttons[:fast_forward].set_tooltip_markup('<b>Ctrl+F</b> Fast-forward track')
       buttons[:start_segment].set_tooltip_markup('<b>Ctrl+A</b> Set segment start at cursor position')
       buttons[:end_segment].set_tooltip_markup('<b>Ctrl+B</b> Set segment end at cursor position')
+      buttons[:clear_end_segment].set_tooltip_markup('Clear end segment')
       buttons[:restart_segment].set_tooltip_markup('<b>Ctrl+E</b> Restart segment')
 
       buttons
@@ -190,9 +192,9 @@ module EasyTranscribe
       @slider.add_mark(@slider_segment_end, Gtk::PositionType::BOTTOM, 'E')
 
       if @slider_length
-        @slider.add_mark(@slider_segment_end, Gtk::PositionType::TOP, "End (#{length})")
+        @slider.add_mark(@slider_length, Gtk::PositionType::TOP, "End (#{@slider_length})")
       else
-        @slider.add_mark(@slider_segment_end, Gtk::PositionType::TOP, "End")
+        @slider.add_mark(1, Gtk::PositionType::TOP, "End")
       end
     end
 
@@ -206,7 +208,7 @@ module EasyTranscribe
     end
 
     def self.slider_end_segment=(position)
-      @slider_segment_end = position
+      @slider_segment_end = position || @slider_length
       reset_slider
     end
 
