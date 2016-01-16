@@ -7,7 +7,7 @@ require_relative 'ui'
 ET = EasyTranscribe
 
 $PLAYER = ET::Player.new
-$FILE = File.open(ARGV[0], 'w')
+$FILE = File.open(ARGV[0], 'a+')
 
 module Commands
   def self.open
@@ -69,6 +69,8 @@ module Commands
 end
 
 ET::UI.setup(commands: Commands)
+
+ET::UI.text = $FILE.read.strip
 
 ET::UI.set_on_slider_value_changed do |_, _, value|
   $PLAYER.seek(value)

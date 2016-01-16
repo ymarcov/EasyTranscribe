@@ -251,6 +251,10 @@ module EasyTranscribe
       @textview.editor.buffer.text
     end
 
+    def self.text=(text)
+      @textview.editor.buffer.text = text
+    end
+
     def self.main_window
       @main_window
     end
