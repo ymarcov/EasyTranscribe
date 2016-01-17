@@ -31,10 +31,12 @@ module Commands
   end
 
   def self.stop
+    return unless $PLAYER.alive?
     $PLAYER.stop
   end
 
   def self.play
+    return unless $PLAYER.alive?
     $PLAYER.playing? and $PLAYER.pause or $PLAYER.play
 
     $FILE.truncate(0)
@@ -43,26 +45,32 @@ module Commands
   end
 
   def self.rewind
+    return unless $PLAYER.alive?
     $PLAYER.rewind
   end
 
   def self.fast_forward
+    return unless $PLAYER.alive?
     $PLAYER.fast_forward
   end
 
   def self.start_segment
+    return unless $PLAYER.alive?
     ET::UI.slider_start_segment = $PLAYER.position
   end
 
   def self.end_segment
+    return unless $PLAYER.alive?
     ET::UI.slider_end_segment = $PLAYER.position
   end
 
   def self.clear_end_segment
+    return unless $PLAYER.alive?
     ET::UI.slider_end_segment = nil
   end
 
   def self.restart_segment
+    return unless $PLAYER.alive?
     $PLAYER.seek(ET::UI.slider_start_segment)
     $PLAYER.play
   end

@@ -12,6 +12,10 @@ module EasyTranscribe
       reset
     end
 
+    def alive?
+      @alive
+    end
+
     def on_position_changed(&block)
       @on_position_changed = block
     end
