@@ -1,3 +1,5 @@
 * When file ends, don't crash, just restart.
 * Get actual file length as float
 * Better absolute seeking (mplayer messes things up)
+* Add Save button
+* Add Export button, and export from mardown to odt using pandoc-ruby
