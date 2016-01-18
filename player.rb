@@ -111,7 +111,6 @@ module EasyTranscribe
 
     def notify_position_changed
       if handler = @on_position_changed
-        p position
         handler.call(position)
       end
     end
