@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 
+require 'pandoc-ruby'
 require_relative 'open_audio_file'
 require_relative 'player'
 require_relative 'ui'
@@ -31,6 +32,7 @@ module Commands
   end
 
   def self.read_file
+    FileUtils.touch($OUTPUT_FILENAME)
     f = File.open($OUTPUT_FILENAME, 'r')
     begin
       return f.read
@@ -57,6 +59,13 @@ module Commands
   end
 
   def self.export
+    f = File.open($OUTPUT_FILENAME + '.odt', 'w')
+    begin
+      output = PandocRuby.convert(ET::UI.text, from: :markdown, to: :odt)
+      f.write(output)
+    ensure
+      f.close
+    end
   end
 
   def self.stop
