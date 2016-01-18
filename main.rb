@@ -7,7 +7,7 @@ require_relative 'ui'
 ET = EasyTranscribe
 
 $PLAYER = ET::Player.new
-$FILE = File.open(ARGV[0], 'a+')
+$OUTPUT_FILENAME = ARGV[0]
 
 module Commands
   def self.open
@@ -30,6 +30,35 @@ module Commands
     end
   end
 
+  def self.read_file
+    f = File.open($OUTPUT_FILENAME, 'r')
+    begin
+      return f.read
+    ensure
+      f.close
+    end
+  end
+
+  def self.save_as(path)
+    f = File.open(path, 'w')
+    begin
+      f.write(ET::UI.text)
+    ensure
+      f.close
+    end
+  end
+
+  def self.save
+    save_as($OUTPUT_FILENAME)
+  end
+
+  def self.save_backup
+    save_as($OUTPUT_FILENAME + '.backup')
+  end
+
+  def self.export
+  end
+
   def self.stop
     return unless $PLAYER.alive?
     $PLAYER.stop
@@ -38,10 +67,7 @@ module Commands
   def self.play
     return unless $PLAYER.alive?
     $PLAYER.playing? and $PLAYER.pause or $PLAYER.play
-
-    $FILE.truncate(0)
-    $FILE.write(ET::UI.text)
-    $FILE.flush
+    save_backup
   end
 
   def self.rewind
@@ -78,7 +104,7 @@ end
 
 ET::UI.setup(commands: Commands)
 
-ET::UI.text = $FILE.read.strip
+ET::UI.text = Commands.read_file
 
 ET::UI.set_on_slider_value_changed do |_, _, value|
   $PLAYER.seek(value)

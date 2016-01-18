@@ -22,6 +22,32 @@ module EasyTranscribe
       win
     end
 
+    def self.create_footer_items
+      {
+        save: Gtk::Button.new(label: 'Save'),
+        export: Gtk::Button.new(label: 'Export')
+      }
+    end
+
+    def self.create_footer
+      box = Gtk::Box.new(:horizontal)
+
+      box.instance_eval do
+        class << self
+          attr_reader :buttons
+        end
+
+        @buttons = UI.create_footer_items
+      end
+
+      box.buttons.each do |_, i|
+        i.set_border_width(5)
+        box.pack_start(i)
+      end
+
+      box
+    end
+
     def self.create_toolbar_items
       buttons = {
         open: Gtk::Button.new(label: 'Open'),
@@ -156,18 +182,27 @@ module EasyTranscribe
 
       textview = create_textview
       toolbar = create_toolbar
+      footer = create_footer
 
       vbox.pack_start(toolbar, expand: false, fill: false)
       vbox.pack_start(textview, expand: true, fill: true)
+      vbox.pack_start(footer, expand: false, fill: false)
 
-      return { layout: vbox, toolbar: toolbar, textview: textview }
+      return {
+        layout: vbox,
+        toolbar: toolbar,
+        textview: textview,
+        footer: footer
+      }
     end
 
     def self.bind_commands(buttons, command_source)
       buttons.each do |name, widget|
         if widget.kind_of?(Gtk::Button)
           widget.signal_connect('clicked') do
-            command_source.method(name).call
+            if command_source.respond_to?(name)
+              command_source.method(name).call
+            end
           end
         end
       end
@@ -194,6 +229,7 @@ module EasyTranscribe
       win.show_all
 
       bind_commands(widgets[:toolbar].buttons, opts[:commands])
+      bind_commands(widgets[:footer].buttons, opts[:commands])
       win.set_focus(widgets[:textview].editor)
 
       @main_window = win
