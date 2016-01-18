@@ -1,6 +1,8 @@
 #!/usr/bin/ruby
 
+require 'gst'
 require 'pandoc-ruby'
+
 require_relative 'open_audio_file'
 require_relative 'player'
 require_relative 'ui'
@@ -112,7 +114,6 @@ module Commands
 end
 
 ET::UI.setup(commands: Commands)
-
 ET::UI.text = Commands.read_file
 
 ET::UI.set_on_slider_value_changed do |_, _, value|
@@ -123,4 +124,5 @@ ET::UI.set_on_exit do
   $PLAYER.destroy
 end
 
+Gst.init
 ET::UI.loop
