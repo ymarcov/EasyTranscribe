@@ -227,15 +227,8 @@ module EasyTranscribe
 
       @main_window = win
 
-      Slider.module_eval do
-        @scale = widgets[:toolbar].slider
-      end
-
-      Editor.module_eval do
-        @textview = widgets[:textview]
-      end
-
-      Slider.init
+      Slider.init(widgets[:toolbar].slider)
+      Editor.init(widgets[:textview])
     end
 
     def self.main_window
@@ -262,12 +255,13 @@ module EasyTranscribe
     module Slider
       private
 
-      def self.init
-          @scale.set_range(0, 1)
-          @segment_start = 0
-          @segment_end = 1
-          @length = nil
-          reset
+      def self.init(scale)
+        @scale = scale
+        @scale.set_range(0, 1)
+        @segment_start = 0
+        @segment_end = 1
+        @length = nil
+        reset
       end
 
       public
@@ -319,6 +313,10 @@ module EasyTranscribe
     end
 
     module Editor
+      def self.init(textview)
+        @textview = textview
+      end
+
       def self.text
         @textview.editor.buffer.text
       end
