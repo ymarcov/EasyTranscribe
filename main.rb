@@ -3,7 +3,7 @@
 require 'gst'
 require 'pandoc-ruby'
 
-require_relative 'open_audio_file'
+require_relative 'file_dialogs'
 require_relative 'player'
 require_relative 'ui'
 
@@ -66,13 +66,17 @@ module Commands
   end
 
   def self.export
-    f = File.open($OUTPUT_FILENAME + '.odt', 'w')
-    begin
-      text = ET::UI.text.gsub("\n", "\n\n").gsub('--', '—')
-      output = PandocRuby.convert(text, from: :markdown, to: :odt)
-      f.write(output)
-    ensure
-      f.close
+    ET::UI::ExportFileDialog.open(ET::UI.main_window) do |dlg|
+      if dlg.ok?
+        f = File.open(dlg.filename, 'w')
+        begin
+          text = ET::UI.text.gsub("\n", "\n\n").gsub('--', '—')
+          output = PandocRuby.convert(text, from: :markdown, to: :odt)
+          f.write(output)
+        ensure
+          f.close
+        end
+      end
     end
   end
 
