@@ -8,7 +8,7 @@ require_relative 'player'
 require_relative 'ui'
 
 if ARGV.length != 1
-  STDERR.puts "Usage: #$0 OUTPUT_TEXT_FILE"
+  STDERR.puts "Usage: #{File.basename($0)} OUTPUT_TEXT_FILE"
   exit 1
 end
 
