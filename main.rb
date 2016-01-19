@@ -7,6 +7,11 @@ require_relative 'open_audio_file'
 require_relative 'player'
 require_relative 'ui'
 
+if ARGV.length != 1
+  STDERR.puts "Usage: #$0 OUTPUT_TEXT_FILE"
+  exit 1
+end
+
 ET = EasyTranscribe
 
 $PLAYER = ET::Player.new
