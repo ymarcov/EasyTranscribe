@@ -208,13 +208,6 @@ module EasyTranscribe
       end
     end
 
-    def self.init_slider
-        @slider.set_range(0, 1)
-        @slider_segment_start = 0
-        @slider_segment_end = 1
-        @slider_length = nil
-        reset_slider
-    end
 
     public
 
@@ -233,69 +226,23 @@ module EasyTranscribe
       win.set_focus(widgets[:textview].editor)
 
       @main_window = win
-      @slider = widgets[:toolbar].slider
-      @textview = widgets[:textview]
-      init_slider
-    end
 
-    def self.reset_slider(length = nil)
-      @slider.clear_marks
-
-      if length
-        @slider.set_range(0, length)
-        @slider_segment_end = length
-        @slider_length = length
+      Slider.module_eval do
+        @scale = widgets[:toolbar].slider
       end
 
-      @slider.add_mark(@slider_segment_start, Gtk::PositionType::BOTTOM, 'S')
-      @slider.add_mark(@slider_segment_end, Gtk::PositionType::BOTTOM, 'E')
-
-      if @slider_length
-        @slider.add_mark(@slider_length, Gtk::PositionType::TOP, "End (#{@slider_length})")
-      else
-        @slider.add_mark(1, Gtk::PositionType::TOP, "End")
+      Editor.module_eval do
+        @textview = widgets[:textview]
       end
-    end
 
-    def self.set_slider_position(position)
-      @slider.value = position
-    end
-
-    def self.slider_start_segment=(position)
-      @slider_segment_start = position
-      reset_slider
-    end
-
-    def self.slider_end_segment=(position)
-      @slider_segment_end = position || @slider_length
-      reset_slider
-    end
-
-    def self.slider_start_segment
-      return @slider_segment_start
-    end
-
-    def self.slider_end_segment
-      return @slider_segment_end
-    end
-
-    def self.set_on_slider_value_changed(&block)
-      @slider.signal_connect('change-value', &block)
-    end
-
-    def self.text
-      @textview.editor.buffer.text
-    end
-
-    def self.text=(text)
-      @textview.editor.buffer.text = text
+      Slider.init
     end
 
     def self.main_window
       @main_window
     end
 
-    def self.set_on_exit(&block)
+    def self.on_exit(&block)
       @on_exit = block
     end
 
@@ -310,6 +257,75 @@ module EasyTranscribe
 
     def self.loop
       Gtk.main
+    end
+
+    module Slider
+      private
+
+      def self.init
+          @scale.set_range(0, 1)
+          @segment_start = 0
+          @segment_end = 1
+          @length = nil
+          reset
+      end
+
+      public
+
+      def self.reset(length = nil)
+        @scale.clear_marks
+
+        if length
+          @scale.set_range(0, length)
+          @segment_end = length
+          @length = length
+        end
+
+        @scale.add_mark(@segment_start, Gtk::PositionType::BOTTOM, 'S')
+        @scale.add_mark(@segment_end, Gtk::PositionType::BOTTOM, 'E')
+
+        if @length
+          @scale.add_mark(@length, Gtk::PositionType::TOP, "End (#{@length})")
+        else
+          @scale.add_mark(1, Gtk::PositionType::TOP, "End")
+        end
+      end
+
+      def self.position=(position)
+        @scale.value = position
+      end
+
+      def self.start_segment=(position)
+        @segment_start = position
+        reset_slider
+      end
+
+      def self.end_segment=(position)
+        @segment_end = position || @length
+        reset_slider
+      end
+
+      def self.start_segment
+        return @segment_start
+      end
+
+      def self.end_segment
+        return @segment_end
+      end
+
+      def self.on_value_changed(&block)
+        @scale.signal_connect('change-value', &block)
+      end
+    end
+
+    module Editor
+      def self.text
+        @textview.editor.buffer.text
+      end
+
+      def self.text=(text)
+        @textview.editor.buffer.text = text
+      end
     end
   end
 end

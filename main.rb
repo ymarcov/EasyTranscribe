@@ -22,13 +22,14 @@ module Commands
     ET::UI::OpenAudioFileDialog.open(ET::UI.main_window) do |dlg|
       if dlg.ok?
         $PLAYER.open(dlg.filename)
-        ET::UI.reset_slider($PLAYER.length)
+
+        ET::UI::Slider.reset($PLAYER.length)
 
         $PLAYER.on_position_changed do |position|
           ET::UI.safe_dispatch do
-            ET::UI.set_slider_position(position)
+            ET::UI::Slider.position = position
 
-            if position >= ET::UI.slider_end_segment
+            if position >= ET::UI::Slider.end_segment
               Commands.restart_segment
             end
           end
@@ -51,7 +52,7 @@ module Commands
   def self.save_as(path)
     f = File.open(path, 'w')
     begin
-      f.write(ET::UI.text)
+      f.write(ET::UI::Editor.text)
     ensure
       f.close
     end
@@ -70,7 +71,7 @@ module Commands
       if dlg.ok?
         f = File.open(dlg.filename, 'w')
         begin
-          text = ET::UI.text.gsub("\n", "\n\n").gsub('--', '—')
+          text = ET::UI::Editor.text.gsub("\n", "\n\n").gsub('--', '—')
           output = PandocRuby.convert(text, from: :markdown, to: :odt)
           f.write(output)
         ensure
@@ -103,34 +104,36 @@ module Commands
 
   def self.start_segment
     return unless $PLAYER.alive?
-    ET::UI.slider_start_segment = $PLAYER.position
+    ET::UI::Slider.start_segment = $PLAYER.position
   end
 
   def self.end_segment
     return unless $PLAYER.alive?
-    ET::UI.slider_end_segment = $PLAYER.position
+    ET::UI::Slider.end_segment = $PLAYER.position
   end
 
   def self.clear_end_segment
     return unless $PLAYER.alive?
-    ET::UI.slider_end_segment = nil
+    ET::UI::Slider.end_segment = nil
   end
 
   def self.restart_segment
     return unless $PLAYER.alive?
-    $PLAYER.seek(ET::UI.slider_start_segment)
+    $PLAYER.seek(ET::UI::Slider.start_segment)
     $PLAYER.play
   end
 end
 
 ET::UI.setup(commands: Commands)
-ET::UI.text = Commands.read_file
 
-ET::UI.set_on_slider_value_changed do |_, _, value|
+ET::UI::Editor.text = Commands.read_file
+
+ET::UI::Slider.on_value_changed do |_, _, value|
+  return unless $PLAYER.alive?
   $PLAYER.seek(value)
 end
 
-ET::UI.set_on_exit do
+ET::UI.on_exit do
   $PLAYER.destroy
 end
 
