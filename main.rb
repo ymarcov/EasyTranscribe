@@ -63,7 +63,7 @@ module Commands
   def self.export
     f = File.open($OUTPUT_FILENAME + '.odt', 'w')
     begin
-      text = ET::UI.text.gsub("\n", "\n\n")
+      text = ET::UI.text.gsub("\n", "\n\n").gsub('--', '—')
       output = PandocRuby.convert(text, from: :markdown, to: :odt)
       f.write(output)
     ensure
