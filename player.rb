@@ -75,12 +75,10 @@ module EasyTranscribe
     end
 
     def rewind
-      return unless playing?
       seek(position - 3)
     end
 
     def fast_forward
-      return unless playing?
       seek(position + 3)
     end
 
