@@ -49,8 +49,8 @@ module Commands
     end
   end
 
-  def self.save_as(path)
-    f = File.open(path, 'w')
+  def self.save
+    f = File.open($OUTPUT_FILENAME, 'w')
     begin
       f.write(ET::UI::Editor.text)
     ensure
@@ -58,12 +58,13 @@ module Commands
     end
   end
 
-  def self.save
-    save_as($OUTPUT_FILENAME)
-  end
-
   def self.save_backup
-    save_as($OUTPUT_FILENAME + '.backup')
+    f = File.open($OUTPUT_FILENAME + '.backup', 'w')
+    begin
+      f.write(ET::UI::Editor.text + " (#{$PLAYER.position})")
+    ensure
+      f.close
+    end
   end
 
   def self.export
