@@ -284,12 +284,12 @@ module EasyTranscribe
 
       def self.start_segment=(position)
         @segment_start = position
-        reset_slider
+        reset
       end
 
       def self.end_segment=(position)
         @segment_end = position || @length
-        reset_slider
+        reset
       end
 
       def self.start_segment
