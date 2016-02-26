@@ -5,10 +5,11 @@ require 'gtk3'
 module EasyTranscribe
   module UI
     class FileDialogBase
-      def self.open(parent_window = nil)
+      def self.open(parent_window = nil, opts = {})
         dlg = new(parent_window, @action, @accept_button)
 
         begin
+          dlg.set_options(opts) if dlg.respond_to? :set_options
           dlg.run
           yield dlg
         ensure
@@ -69,6 +70,12 @@ module EasyTranscribe
     class ExportFileDialog < FileDialogBase
       @accept_button = Gtk::Stock::SAVE
       @action = :save
+
+      def set_options(options)
+        if f = options[:default_filename]
+          @dlg.current_name = f
+        end
+      end
 
       def get_filters
         odt_filter = Gtk::FileFilter.new

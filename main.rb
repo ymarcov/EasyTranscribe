@@ -68,7 +68,9 @@ module Commands
   end
 
   def self.export
-    ET::UI::ExportFileDialog.open(ET::UI.main_window) do |dlg|
+    options = { default_filename: $OUTPUT_FILENAME + '.odt' }
+
+    ET::UI::ExportFileDialog.open(ET::UI.main_window, options) do |dlg|
       if dlg.ok?
         f = File.open(dlg.filename, 'w')
         begin
