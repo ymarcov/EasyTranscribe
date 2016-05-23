@@ -68,7 +68,7 @@ module Commands
   end
 
   def self.export
-    options = { default_filename: $OUTPUT_FILENAME + '.odt' }
+    options = { default_filename: $OUTPUT_FILENAME.gsub(/.txt$/, '') + '.odt' }
 
     ET::UI::ExportFileDialog.open(ET::UI.main_window, options) do |dlg|
       if dlg.ok?
